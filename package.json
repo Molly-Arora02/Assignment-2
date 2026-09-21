@@ -4,8 +4,8 @@
   "description": "Campus Placement & Internship Management System",
   "type": "module",
   "scripts": {
-    "build": "cd client && npm install --include=dev && npm run build && cd .. && rm -rf dist && cp -r client/dist dist",
-    "vercel-build": "cd client && npm install --include=dev && npm run build && cd .. && rm -rf dist && cp -r client/dist dist",
+    "build": "if [ -d \"client\" ]; then cd client && npm install --include=dev && npm run build && cd .. && rm -rf dist && cp -r client/dist dist; else npm run build; fi",
+    "vercel-build": "if [ -d \"client\" ]; then cd client && npm install --include=dev && npm run build && cd .. && rm -rf dist && cp -r client/dist dist; else npm run build; fi",
     "start": "npm --prefix server start",
     "server": "npm --prefix server start",
     "server:dev": "npm --prefix server run dev",
