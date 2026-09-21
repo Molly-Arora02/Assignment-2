@@ -1,7 +1,7 @@
-// Client-Side Mock Database & Fallback Service
-// Enables seamless full-fidelity operation even when deployed as a static frontend SPA
+// Client-Side Stateful Mock Database & Engine
+// Keeps all user interactions, applications, drives, profiles, and policy state persistent across sessions
 
-export const INITIAL_DRIVES = [
+export const DEFAULT_DRIVES = [
   {
     _id: 'drive_google_01',
     companyId: {
@@ -172,12 +172,22 @@ export const INITIAL_DRIVES = [
   },
 ];
 
-export const INITIAL_APPLICATIONS = [
+export const DEFAULT_COMPANIES = [
+  { _id: 'comp_google', name: 'Google India', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
+  { _id: 'comp_microsoft', name: 'Microsoft', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg' },
+  { _id: 'comp_amazon', name: 'Amazon', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg' },
+  { _id: 'comp_goldman', name: 'Goldman Sachs', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/61/Goldman_Sachs.svg' },
+  { _id: 'comp_cisco', name: 'Cisco Systems', logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg' },
+  { _id: 'comp_adobe', name: 'Adobe', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/8d/Adobe_Corporate_Logo.png' },
+  { _id: 'comp_deloitte', name: 'Deloitte', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Deloitte.svg' },
+];
+
+export const DEFAULT_APPLICATIONS = [
   {
     _id: 'app_001',
     studentId: 'stud_aarav_001',
-    driveId: INITIAL_DRIVES[0],
-    companyId: INITIAL_DRIVES[0].companyId,
+    driveId: DEFAULT_DRIVES[0],
+    companyId: DEFAULT_DRIVES[0].companyId,
     status: 'Shortlisted',
     appliedAt: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     applicantSnapshot: {
@@ -186,6 +196,7 @@ export const INITIAL_APPLICATIONS = [
       activeBacklogs: 0,
       graduationYear: 2026,
       skills: ['React', 'Node.js', 'Python', 'Docker', 'PostgreSQL'],
+      resumeUrl: 'https://example.com/resumes/aarav_sharma_swe.pdf',
     },
     statusHistory: [
       { status: 'Applied', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), notes: 'Application submitted via student portal' },
@@ -195,8 +206,8 @@ export const INITIAL_APPLICATIONS = [
   {
     _id: 'app_002',
     studentId: 'stud_priya_001',
-    driveId: INITIAL_DRIVES[1],
-    companyId: INITIAL_DRIVES[1].companyId,
+    driveId: DEFAULT_DRIVES[1],
+    companyId: DEFAULT_DRIVES[1].companyId,
     status: 'Selected',
     appliedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     applicantSnapshot: {
@@ -205,6 +216,7 @@ export const INITIAL_APPLICATIONS = [
       activeBacklogs: 0,
       graduationYear: 2026,
       skills: ['PyTorch', 'TensorFlow', 'Python', 'MLOps'],
+      resumeUrl: 'https://example.com/resumes/priya_nair_ai.pdf',
     },
     statusHistory: [
       { status: 'Applied', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), notes: 'Application submitted' },
@@ -215,24 +227,48 @@ export const INITIAL_APPLICATIONS = [
   },
 ];
 
+// LocalStorage helpers
 export function getMockDrives() {
   const saved = localStorage.getItem('campusconnect_drives');
   if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {}
+    try { return JSON.parse(saved); } catch (e) {}
   }
-  localStorage.setItem('campusconnect_drives', JSON.stringify(INITIAL_DRIVES));
-  return INITIAL_DRIVES;
+  localStorage.setItem('campusconnect_drives', JSON.stringify(DEFAULT_DRIVES));
+  return DEFAULT_DRIVES;
+}
+
+export function saveMockDrives(drives) {
+  localStorage.setItem('campusconnect_drives', JSON.stringify(drives));
 }
 
 export function getMockApplications() {
   const saved = localStorage.getItem('campusconnect_applications');
   if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch (e) {}
+    try { return JSON.parse(saved); } catch (e) {}
   }
-  localStorage.setItem('campusconnect_applications', JSON.stringify(INITIAL_APPLICATIONS));
-  return INITIAL_APPLICATIONS;
+  localStorage.setItem('campusconnect_applications', JSON.stringify(DEFAULT_APPLICATIONS));
+  return DEFAULT_APPLICATIONS;
+}
+
+export function saveMockApplications(apps) {
+  localStorage.setItem('campusconnect_applications', JSON.stringify(apps));
+}
+
+export function getMockPolicy() {
+  const saved = localStorage.getItem('campusconnect_policy');
+  if (saved) {
+    try { return JSON.parse(saved); } catch (e) {}
+  }
+  const defaultPolicy = {
+    enabled: true,
+    allowDreamUpgrade: true,
+    dreamMultiplier: 1.5,
+    maxBacklogsAllowedInstitutionWide: 2,
+  };
+  localStorage.setItem('campusconnect_policy', JSON.stringify(defaultPolicy));
+  return defaultPolicy;
+}
+
+export function saveMockPolicy(policy) {
+  localStorage.setItem('campusconnect_policy', JSON.stringify(policy));
 }
